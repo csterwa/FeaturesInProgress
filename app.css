@@ -1,0 +1,40 @@
+body {
+    overflow-y: auto !important;
+}
+
+.app {
+    margin: 10px 30px;
+}
+
+.app > .leftSide {
+    float: left;
+    width: 25%;
+}
+
+.app > .rightSide {
+    float: right;
+    width: 70%;
+}
+
+.app .treeItemSelected {
+    background: #D0F1D9;
+}
+
+.grayLabel {
+    color: #888;
+    margin: 5px 15px;
+}
+
+h1 {
+    font-size: 14px;
+    margin: 5px;
+}
+
+.noProjectSelected {
+    margin: 40px 0 0 0;
+    width: 200px;
+    padding: 20px;
+    border: 1px solid #EEE;
+    color: #888;
+    text-align: center;
+}

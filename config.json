@@ -1,0 +1,16 @@
+{
+    "name": "FeaturesInProgress",
+    "className": "FeaturesInProgress",
+    "sdk": "2.0p2",
+    "javascript": [
+		"ProjectTree.js",
+		"InMemoryColumn.js",
+		"PortfolioKanbanCard.js",
+		"PortfolioKanban.js",
+		"InProgressBoard.js",        
+		"App.js"
+    ],
+    "css": [
+        "app.css"
+    ]
+}
