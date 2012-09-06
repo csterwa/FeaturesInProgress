@@ -3,7 +3,7 @@
 <head>
     <title>FeaturesInProgress</title>
 
-    <script type="text/javascript" src="/apps/2.0p2/sdk.js"></script>
+    <script type="text/javascript" src="/apps/2.0p3/sdk.js"></script>
 
     <script type="text/javascript">
         Rally.onReady(function() {
@@ -97,7 +97,7 @@
              * A special cardboard card for use by the PortfolioKanbanApp
              */
             Ext.define('Rally.app.portfolioitem.PortfolioKanbanCard', {
-                extend:'Rally.ui.cardboard.ArtifactCard',
+                extend:'Rally.ui.cardboard.Card',
                 alias:'widget.rallyportfoliokanbancard',
             
                 inheritableStatics:{
@@ -181,11 +181,21 @@
                         
                         Ext.create('Rally.data.WsapiDataStore', {
                             autoLoad: true,
-                            model: 'Type',
-                            sorters: {
-                                property: 'ordinalValue',
-                                direction: 'Asc'
-                            },
+                            model: 'TypeDefinition',
+                            filters: [
+                                {
+                                    property: 'Ordinal',
+                                    value: 0
+                                },
+                                {
+                                    property: 'Parent.Name',
+                                    value: "Portfolio Item"
+                                }
+                            ],
+            //                sorters: {
+            //                    property: 'ordinalValue',
+            //                    direction: 'Asc'
+            //                },
                             listeners: {
                                 load: function(store, records){
                                     this._loadCardboard(records[0].get('_ref'));
@@ -227,7 +237,7 @@
                             fetch: ['Name', 'WIPLimit', 'Description'],
                             filters: [
                                 {
-                                    property: 'StateType',
+                                    property: 'TypeDef',
                                     value: options.type
                                 },
                                 {
@@ -301,7 +311,7 @@
                         var columns;
             
                         if (states.length) {
-                            
+            
                             var features = Ext.Array.filter(this.getFeatures(), function(feature){
                                 return !feature.get('State');
                             });
@@ -381,7 +391,7 @@
                     });
                     
                     Rally.data.ModelFactory.getModel({
-                        type: 'Portfolio Item',
+                        type: 'PortfolioItem/Feature',
                         success: function(model){
                             this.portfolioItemModel = model;
                             this.buildBoard();
@@ -447,7 +457,7 @@
                         model: 'User Story',
                         filters: storyFilter,
                         context: {
-                            project: project.get('_ref'),
+                            project: project,
                             projectScopeDown: true
                         }
                     });
@@ -547,48 +557,26 @@
                 extend: 'Rally.app.App',
                 componentCls: 'app',
             
-                items: [
-                    {
-                        xtype: 'container',
-                        cls: 'leftSide',
-                        itemId: 'leftSide'
-                    },
-                    {
-                        xtype: 'container',
-                        cls: 'rightSide',
-                        itemId: 'rightSide'
-                    }
-                ],
-            
                 launch: function() {
-                    
-                    //left column: project tree
-                    //right column:
-                    //list of features that has stories under it assigned to the selected project
-                    //pi kanban board of features
-                    
                     this.buildProjectTree();
                     this.buildKanbanBoard();
-                    
                 },
                 
                 buildProjectTree: function(){
-                    
-                    var tree = Ext.create('FeaturesInProgress.ProjectTree');
-                    tree.on('projectselected', this.projectSelected, this);
-                    this.down('#leftSide').add(tree);
+                    var tree = Ext.widget('rallyprojectpicker');
+                    tree.on('change', this.projectSelected, this);
+                    this.add(tree);
                 },
                 
-                projectSelected: function(record){
-                    this.board.updateWithProject(record);
+                projectSelected: function(field, value){
+                    this.board.updateWithProject(value);
                 },
                 
                 buildKanbanBoard: function(){
-                    
                     var board = this.board = Ext.create('FeaturesInProgress.InProgressBoard', {
                         context: this.getContext()
                     });
-                    this.down('#rightSide').add(board);
+                    this.add(board);
                 }
             });
 
