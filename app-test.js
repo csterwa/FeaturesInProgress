@@ -7,8 +7,8 @@ Rally.onReady(function () {
         "InProgressBoard.js",
         "App.js"
     ], function () {
-        Rally.launchApp('FeaturesInProgress', {
-            name:'FeaturesInProgress'
-        })
+        //include the tests in the test.html head
+        jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+        jasmine.getEnv().execute();
     }, true);
 });
