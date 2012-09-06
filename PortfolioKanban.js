@@ -16,11 +16,21 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
             
             Ext.create('Rally.data.WsapiDataStore', {
                 autoLoad: true,
-                model: 'Type',
-                sorters: {
-                    property: 'ordinalValue',
-                    direction: 'Asc'
-                },
+                model: 'TypeDefinition',
+                filters: [
+                    {
+                        property: 'Ordinal',
+                        value: 0
+                    },
+                    {
+                        property: 'Parent.Name',
+                        value: "Portfolio Item"
+                    }
+                ],
+//                sorters: {
+//                    property: 'ordinalValue',
+//                    direction: 'Asc'
+//                },
                 listeners: {
                     load: function(store, records){
                         this._loadCardboard(records[0].get('_ref'));
@@ -62,7 +72,7 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
                 fetch: ['Name', 'WIPLimit', 'Description'],
                 filters: [
                     {
-                        property: 'StateType',
+                        property: 'TypeDef',
                         value: options.type
                     },
                     {
@@ -136,7 +146,7 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
             var columns;
 
             if (states.length) {
-                
+
                 var features = Ext.Array.filter(this.getFeatures(), function(feature){
                     return !feature.get('State');
                 });

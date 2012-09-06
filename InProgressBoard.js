@@ -30,7 +30,7 @@ Ext.define('FeaturesInProgress.InProgressBoard', {
         });
         
         Rally.data.ModelFactory.getModel({
-            type: 'Portfolio Item',
+            type: 'PortfolioItem/Feature',
             success: function(model){
                 this.portfolioItemModel = model;
                 this.buildBoard();
@@ -96,7 +96,7 @@ Ext.define('FeaturesInProgress.InProgressBoard', {
             model: 'User Story',
             filters: storyFilter,
             context: {
-                project: project.get('_ref'),
+                project: project,
                 projectScopeDown: true
             }
         });

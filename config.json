@@ -1,7 +1,7 @@
 {
     "name": "FeaturesInProgress",
     "className": "FeaturesInProgress",
-    "sdk": "2.0p2",
+    "sdk": "2.0p3",
     "javascript": [
 		"ProjectTree.js",
 		"InMemoryColumn.js",
