@@ -44,11 +44,8 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
         _loadCardboard: function(type) {
             this.type = type;
             this._loadStates({
-                type: type,
                 success: function (states) {
-                    
-                    var columns = this._createColumns(states);
-                    this._drawCardboard(columns);
+                    this._drawCardboard(this._createColumns(states));
                 },
                 scope: this
             });
@@ -73,7 +70,7 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
                 filters: [
                     {
                         property: 'TypeDef',
-                        value: options.type
+                        value: this.type
                     },
                     {
                         property: 'Enabled',
@@ -108,19 +105,32 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
                     cardboard.destroy();
                 }
 
+                var columnConfig = {
+                    xtype:'inmemorycolumn'
+                };
+
+                var cardConfig = {
+                    xtype:'rallyportfoliokanbancard'
+                };
+
                 cardboard = Ext.widget('rallycardboard', {
-                    types: ['PortfolioItem'],
+                    types: ['PortfolioItem/Feature'],
                     itemId: 'cardboard',
                     attribute: 'State',
                     columns: columns,
                     maxColumnsPerBoard: columns.length,
                     enableRanking: false,
-                    columnConfig: {
-                        xtype: 'inmemorycolumn'
+                    columnConfig: columnConfig,
+                    cardConfig: cardConfig,
+                    storeConfig:{
+                        filters:[
+                            {
+                                property:'PortfolioItemType',
+                                value:this.type
+                            }
+                        ],
+                        context: this.context.getDataContext()
                     },
-                    cardConfig: {
-                        xtype: 'rallyportfoliokanbancard'
-                    }
                 });
 
                 this.add(cardboard);
@@ -143,36 +153,30 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
         },
 
         _createColumns: function(states){
-            var columns;
-
-            if (states.length) {
-
-                var features = Ext.Array.filter(this.getFeatures(), function(feature){
-                    return !feature.get('State');
-                });
-
-                columns = [
-                    {
-                        displayValue: 'No Entry',
-                        value: null,
-                        cardLimit: 50,
-                        features: features
-                    }
-                ];
-
-                Ext.Array.each(states, function(state){
-                    
-                    var features = Ext.Array.filter(this.getFeatures(), function(feature){
-                        return feature.get('State') && feature.get('State')._refObjectName === state.get('Name');
-                    });
-                    
-                    columns.push({
-                        value: state.get('_ref'),
-                        displayValue: state.get('Name'),
-                        features: features
-                    });
-                }, this);
+            if(!states.length) {
+                return undefined;
             }
+
+            var columns = [
+                {
+                    displayValue: 'No Entry',
+                    value: null,
+                    cardLimit: 50
+                }
+            ];
+
+            Ext.Array.each(states, function(state){
+                
+                var features = Ext.Array.filter(this.getFeatures(), function(feature){
+                    return feature.get('State') && feature.get('State')._refObjectName === state.get('Name');
+                });
+                
+                columns.push({
+                    value: state.get('_ref'),
+                    displayValue: state.get('Name'),
+                    features: features
+                });
+            }, this);
 
             return columns;
         },
@@ -181,10 +185,11 @@ Ext.define('FeaturesInProgress.PortfolioKanban', {
             Ext.create('Rally.ui.tooltip.PercentDoneToolTip', {
                 target: cardboard.getEl(),
                 delegate: '.percentDoneContainer',
+                percentDoneName: 'PercentDoneByStoryCount',
                 listeners: {
                     beforeshow: function(tip){
 
-                        var cardElement = Ext.get(tip.triggerElement).up('.cardContainer');
+                        var cardElement = Ext.get(tip.triggerElement).up('.rui-card');
                         var card = Ext.getCmp(cardElement.id);
 
                         tip.updateContent(card.getRecord().data);
