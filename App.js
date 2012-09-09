@@ -3,14 +3,14 @@ Ext.define('FeaturesInProgress', {
     componentCls: 'app',
 
     launch: function() {
-        this.buildProjectTree();
+        this.buildProjectPicker();
         this.buildKanbanBoard();
     },
     
-    buildProjectTree: function(){
-        var tree = Ext.widget('rallyprojectpicker');
-        tree.on('change', this.projectSelected, this);
-        this.add(tree);
+    buildProjectPicker: function(){
+        var picker = Ext.widget('rallyprojectpicker');
+        picker.on('change', this.projectSelected, this);
+        this.add(picker);
     },
     
     projectSelected: function(field, value){
